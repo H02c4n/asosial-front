@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
 import { AxiosError } from 'axios';
+import { Loader2, Sparkles } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -18,6 +20,7 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       await login(username, password);
+      toast.success('Hoş geldin!');
     } catch (err) {
       const axiosErr = err as AxiosError<{ detail?: string }>;
       setError(
@@ -30,41 +33,62 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-sm mx-auto mt-12">
-      <h1 className="text-2xl font-bold mb-6">Giriş Yap</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="max-w-md mx-auto mt-16">
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-100 rounded-2xl mb-4">
+          <Sparkles className="w-7 h-7 text-blue-600" />
+        </div>
+        <h1 className="text-2xl font-bold text-zinc-900">Tekrar hoş geldin</h1>
+        <p className="text-sm text-zinc-500 mt-1">Hesabına giriş yap</p>
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white border border-zinc-200 rounded-2xl p-6 space-y-4"
+      >
         <div>
-          <label className="block text-sm mb-1">Kullanıcı Adı</label>
+          <label className="block text-sm font-medium text-zinc-700 mb-1.5">
+            Kullanıcı Adı
+          </label>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            className="w-full border rounded px-3 py-2"
+            autoFocus
+            className="w-full border border-zinc-300 rounded-lg px-3 py-2 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
           />
         </div>
         <div>
-          <label className="block text-sm mb-1">Şifre</label>
+          <label className="block text-sm font-medium text-zinc-700 mb-1.5">Şifre</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full border rounded px-3 py-2"
+            className="w-full border border-zinc-300 rounded-lg px-3 py-2 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
           />
         </div>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+
+        {error && (
+          <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+            {error}
+          </div>
+        )}
+
         <button
           type="submit"
           disabled={submitting}
-          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+          className="w-full bg-blue-600 text-white font-medium py-2.5 rounded-lg hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed transition flex items-center justify-center gap-2"
         >
+          {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
           {submitting ? 'Giriş yapılıyor...' : 'Giriş Yap'}
         </button>
       </form>
-      <p className="text-sm text-center mt-4 text-gray-600">
+
+      <p className="text-sm text-center mt-6 text-zinc-600">
         Hesabın yok mu?{' '}
-        <Link href="/register" className="text-blue-500 hover:underline">
+        <Link href="/register" className="text-blue-600 font-medium hover:underline">
           Kayıt ol
         </Link>
       </p>
