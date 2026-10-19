@@ -45,3 +45,14 @@ export interface PaginatedResponse<T> {
   previous: string | null;
   results: T[];
 }
+
+export interface Notification {
+  id: number;
+  actor: User;
+  notification_type: 'follow' | 'comment' | 'like';
+  notification_type_display: string;
+  post: number | null;
+  comment: number | null;
+  is_read: boolean;
+  created_at: string;
+}

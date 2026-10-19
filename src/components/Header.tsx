@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { LogOut, Sparkles, User as UserIcon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import {NotificationBell} from './NotificationBell';
 import { Avatar } from './Avatar';
 
 export function Header() {
@@ -21,6 +22,7 @@ export function Header() {
             <div className="w-8 h-8 bg-zinc-100 rounded-full animate-pulse" />
           ) : user ? (
             <>
+            <NotificationBell />
               <Link
                 href={`/users/${user.username}`}
                 className="flex items-center gap-2 hover:bg-zinc-100 rounded-full pl-1 pr-3 py-1 transition"
