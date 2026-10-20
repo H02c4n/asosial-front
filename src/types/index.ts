@@ -20,6 +20,8 @@ export interface Post {
   image: string | null;
   comment_count: number;
   recent_comments: Comment[];
+  like_count: number;
+  is_liked: boolean;
   created_at: string;
   updated_at: string;
 }

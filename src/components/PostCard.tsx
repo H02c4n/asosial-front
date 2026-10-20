@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { MessageCircle, Trash2, Loader2 } from 'lucide-react';
+import { Heart, MessageCircle, Trash2, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
@@ -14,14 +14,20 @@ import { Avatar } from './Avatar';
 interface Props {
   post: Post;
   onDeleted?: () => void;
-  /** PostCard detay sayfasında gösteriliyorsa false yap */
+  onLikeChange?: (postId: number, liked: boolean, count: number) => void;
   clickable?: boolean;
 }
 
-export function PostCard({ post, onDeleted, clickable = true }: Props) {
+export function PostCard({ post, onDeleted, onLikeChange, clickable = true }: Props) {
   const { user } = useAuth();
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
+
+  // Optimistic UI state
+  const [isLiked, setIsLiked] = useState(post.is_liked);
+  const [likeCount, setLikeCount] = useState(post.like_count);
+  const [liking, setLiking] = useState(false);
+
   const isOwner = user?.id === post.author.id;
 
   const goToDetail = () => {
@@ -49,13 +55,50 @@ export function PostCard({ post, onDeleted, clickable = true }: Props) {
     router.push(`/posts/${post.id}`);
   };
 
+  const toggleLike = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    if (isOwner) {
+      toast.error('Kendi postunuzu beğenemezsiniz');
+      return;
+    }
+
+    if (liking) return;
+    setLiking(true);
+
+    // Optimistic UI: anında değiştir
+    const previousLiked = isLiked;
+    const previousCount = likeCount;
+    const newLiked = !isLiked;
+    const newCount = newLiked ? likeCount + 1 : Math.max(0, likeCount - 1);
+    setIsLiked(newLiked);
+    setLikeCount(newCount);
+
+    try {
+      const endpoint = newLiked ? 'like' : 'unlike';
+      await api.post(`/posts/${post.id}/${endpoint}/`);
+      onLikeChange?.(post.id, newLiked, newCount);
+    } catch (err) {
+      // Hata → geri al
+      setIsLiked(previousLiked);
+      setLikeCount(previousCount);
+      toast.error('İşlem başarısız');
+      console.error(err);
+    } finally {
+      setLiking(false);
+    }
+  };
+
   return (
     <article
       onClick={goToDetail}
       className={`bg-white border border-zinc-200 rounded-2xl p-4 transition ${
-        clickable
-          ? 'hover:border-zinc-300 hover:shadow-sm cursor-pointer'
-          : ''
+        clickable ? 'hover:border-zinc-300 hover:shadow-sm cursor-pointer' : ''
       }`}
     >
       <div className="flex gap-3">
@@ -113,6 +156,22 @@ export function PostCard({ post, onDeleted, clickable = true }: Props) {
             >
               <MessageCircle className="w-4 h-4" />
               <span>{post.comment_count}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={toggleLike}
+              disabled={liking}
+              className={`flex items-center gap-1.5 text-sm px-2 py-1 rounded-full transition ${
+                isLiked
+                  ? 'text-red-500 hover:bg-red-50'
+                  : 'hover:bg-red-50 hover:text-red-500'
+              }`}
+            >
+              <Heart
+                className={`w-4 h-4 transition ${isLiked ? 'fill-red-500' : ''}`}
+              />
+              <span>{likeCount}</span>
             </button>
           </div>
         </div>
