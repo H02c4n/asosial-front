@@ -49,7 +49,7 @@ export function NotificationBell() {
           <div className="flex items-center justify-between p-3 border-b border-zinc-100 sticky top-0 bg-white">
             <h3 className="font-semibold text-sm flex items-center gap-2">
               Bildirimler
-              {!connected && <WifiOff className="w-3.5 h-3.5 text-amber-500" title="Bağlantı yok" />}
+              {!connected && <WifiOff className="w-3.5 h-3.5 text-amber-500" aria-label="Bağlantı yok" />}
             </h3>
             {unreadCount > 0 && (
               <button
