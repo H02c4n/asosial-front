@@ -153,6 +153,7 @@ export function PostCard({ post, onDeleted, onLikeChange, clickable = true }: Pr
               type="button"
               onClick={openComments}
               className="flex items-center gap-1.5 text-sm px-2 py-1 rounded-full hover:bg-blue-50 hover:text-blue-600 transition"
+              aria-label="Yorumlar"
             >
               <MessageCircle className="w-4 h-4" />
               <span>{post.comment_count}</span>
@@ -167,6 +168,7 @@ export function PostCard({ post, onDeleted, onLikeChange, clickable = true }: Pr
                   ? 'text-red-500 hover:bg-red-50'
                   : 'hover:bg-red-50 hover:text-red-500'
               }`}
+              aria-label="Beğen"
             >
               <Heart
                 className={`w-4 h-4 transition ${isLiked ? 'fill-red-500' : ''}`}
