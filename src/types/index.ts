@@ -31,6 +31,8 @@ export interface Comment {
   post: number;
   author: User;
   content: string;
+  parent: number | null;
+  replies: Comment[];
   created_at: string;
   updated_at: string;
 }

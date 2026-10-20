@@ -1,6 +1,7 @@
 'use client';
 
-import Image from 'next/image';
+// Image importunu kaldır
+// import Image from 'next/image'; 
 import { backendUrl, getAvatarColor, getInitials } from '@/lib/utils';
 
 interface AvatarProps {
@@ -15,11 +16,10 @@ export function Avatar({ username, avatar, size = 40, className = '' }: AvatarPr
 
   if (url) {
     return (
-      <Image
+      // Standart <img> etiketi kullanıyoruz
+      <img
         src={url}
         alt={username}
-        width={size}
-        height={size}
         className={`rounded-full object-cover shrink-0 ${className}`}
         style={{ width: size, height: size }}
       />
