@@ -29,6 +29,8 @@ describe('PostCard Component', () => {
     is_liked: false,
     comment_count: 0,
     created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(), // <-- EKLE
+    image: null,                          // <-- EKLE
     recent_comments: [],
   };
 
